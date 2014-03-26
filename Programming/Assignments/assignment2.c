@@ -171,7 +171,7 @@ for errors, increment counter[] elements
 ************************************************/
 void pick_numbers(int int_picks[], int counter[])
 {
-	int i, j;
+	register int i, j;
 	char string_pick[31] = "0";
 
 	printf("\n\tEnter six non-repeating numbers from 1-42\n\n");
@@ -217,7 +217,7 @@ Returns: void
 *************************************/
 void show_numbers(int A[])
 {
-	int i;
+	register int i;
 	for(i = 0; i < SIZE; i++)
 	{
 		printf("%d ", *(A+i));
@@ -235,7 +235,8 @@ Returns: void
 **************************************/
 void sort(int A[])
 {
-	int i, j, swapped, temp;
+	register int i, j;
+	int swapped, temp;
 
 	for(i = 0; i < SIZE-1; i++)
 	{
@@ -265,9 +266,10 @@ show prize
 *************************************/
 void check_winning(int user_numbers[])
 {
+	register int i, j;
 	int win_numbers[SIZE] = {1, 3, 5, 7, 9, 11};
 	int bonus = 42;
-	int matches = 0, i, j;
+	int matches = 0;
 
 	/*check for 6 winning numbers*/
 	for(i = 0; i < SIZE; i++)
