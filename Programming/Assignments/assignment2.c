@@ -83,7 +83,6 @@ before user can choose options 2-4
 ***************************************/
 void menu_run(int *state_p)
 {
-	/*Get option from user*/
 	char option[31] = "0";
 	scanf("%30s", option);
 	
@@ -105,7 +104,6 @@ void menu_run(int *state_p)
 	/*Available menu options*/
 	switch(*option)
 	{ 
-		/*Pick lotto numbers, change state to READY*/
 		case '1': 
 			pick_numbers(picks, frequency_counter);
 			printf("\n\tNumbers have been saved!\n");
@@ -114,7 +112,6 @@ void menu_run(int *state_p)
 			break;
 		//end
 
-		/*Show picks array*/
 		case '2': 
 			printf("\n\tThe numbers you have picked are: ");
 			show_numbers(picks);
@@ -122,7 +119,6 @@ void menu_run(int *state_p)
 			break;
 		//end
 
-		/*Sort picks array*/
 		case '3':
 			sort(picks);
 			printf("\n\tDone: Numbers are sorted now");
@@ -130,21 +126,18 @@ void menu_run(int *state_p)
 			break;
 		//end
 
-		/*Compare user numbers vs winning numbers*/
 		case '4':
 			check_winning(picks);
 			pause();
 			break;
 		//end
 
-		/*Show frequency of numbers entered*/
 		case '5':
 			display_frequency(frequency_counter);
 			pause();
 			break;
 		//end
 
-		/*Graciously end program*/
 		case '6':
 			printf("\n\tThanks for playing!\n\n");
 			sleep(2);
@@ -153,7 +146,6 @@ void menu_run(int *state_p)
 			break;
 		//end
 
-		/*Error handling*/
 		default:
 			printf("\n\tInvalid entry. Please pick again: ");
 			menu_run(state_p);
@@ -180,11 +172,10 @@ void pick_numbers(int int_picks[], int counter[])
 	for (i = 0; i < SIZE; i++)
 	{
 		do 
-		{	/*get string*/
+		{
 			printf("\tNumber %d : ", i+1);
 			scanf("%30s", string_pick);
 
-			/*convert to int and place in picks[]*/
 			*(int_picks+i) = atoi(string_pick);
 
 			/*check if number has been picked before*/
