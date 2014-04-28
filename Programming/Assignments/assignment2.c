@@ -83,6 +83,7 @@ before user can choose options 2-4
 ***************************************/
 void menu_run(int *state_p)
 {
+
 	char option[31] = "0";
 	scanf("%30s", option);
 	
