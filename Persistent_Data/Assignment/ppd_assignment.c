@@ -6,6 +6,16 @@ Assignment
 Andrejs Lahs
 C13766231
 
+Program for managing employee records in a binary file.
+User can see how many employees there are in total/active/deleted.
+Menu allows user to add new records, delete records 
+(by marking the record with a star), search record by name,
+surname, department, or duration. User can also choose to
+compact all of the records; this means that all of the records
+marked for deletion will be removed from the file, active records
+will be sorted by surname, and internal/external fragmentation will
+be removed.
+
 Compiles with GCC
 */
 
@@ -449,8 +459,8 @@ void compact_records(FILE *pf)
 /*
  * QUICKSORT ALGORITHM (improved version)
  * Part 1
- * Function uses recursion to stack and sort employees by 
- * the user-chosen members of the record structure.
+ * Function uses recursion to stack and 
+ * sort employees by surname.
  * Parameters: lowest element number, highest
  * element number, array of structures.
  * Returns: void
@@ -472,7 +482,8 @@ void quick_sort(struct record A[], int low, int high)
  * QUICKSORT
  * Part 2
  * Function chooses a pivot and swaps elements.
- * Paramenters: lowest element, highest element.
+ * Paramenters: lowest element, highest element,
+ * array of structures.
  * Returns: integer for high/low in quick_sort function.
  */
 int partition(struct record A[], int low, int high)
