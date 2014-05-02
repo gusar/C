@@ -97,14 +97,15 @@ int main()
 	/* Copy 3 arrays into one */
 	merge();
 
-	for(i = 0; i < SIZE; i++)
-	{
-		printf("%d: %s\n", i+1, TUD[i].surname);
-	}
 
 	/* Sort records by surname */
 	quick_sort(0, SIZE-1);
 
+	for(i = 0; i < SIZE; i++)
+	{
+		printf("%d: %s\n", i+1, TUD[i].surname);
+	}
+	
 	/* Call search menu */
 	char again;
 	do
@@ -174,7 +175,7 @@ void quick_sort(int low, int high)
 int partition(int low, int high)
 {
 	int j, i, P;
-	char temp[16] = {0};
+	struct record temp;
 
 	P = low;
 	i = low + 1;
@@ -199,9 +200,9 @@ int partition(int low, int high)
 	
 		if (i < j)
 		{ 
-			strcpy(temp, TUD[i].surname);
-			strcpy(TUD[i].surname, TUD[j].surname);
-			strcpy(TUD[j].surname, temp);
+			temp = TUD[i];
+			TUD[i] = TUD[j];
+			TUD[j] = temp;
 		}
 	} while (i < j);//end while
 
@@ -209,9 +210,9 @@ int partition(int low, int high)
 	/* Place pivot element into the new position */
 	if (j != low)
 	{
-		strcpy(temp, TUD[P].surname);
-		strcpy(TUD[P].surname, TUD[j].surname);
-		strcpy(TUD[j].surname, temp);
+		temp = TUD[P];
+		TUD[P] = TUD[j];
+		TUD[j] = temp;
 	}
 
 	return j;

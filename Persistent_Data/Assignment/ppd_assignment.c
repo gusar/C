@@ -489,7 +489,7 @@ void quick_sort(struct record A[], int low, int high)
 int partition(struct record A[], int low, int high)
 {
 	int j, i, P;
-	char temp[16] = {0};
+	struct record temp;
 
 	P = low;
 	i = low + 1;
@@ -513,9 +513,9 @@ int partition(struct record A[], int low, int high)
 	
 		if (i < j)
 		{ 
-			strcpy(temp, A[i].lastName);
-			strcpy(A[i].lastName, A[j].lastName);
-			strcpy(A[j].lastName, temp);
+			temp = A[i];
+			A[i] = A[j];
+			A[j] = temp;
 		}
 	} while (i < j);//end while
 
@@ -523,9 +523,9 @@ int partition(struct record A[], int low, int high)
 	/* Place pivot element into the new position */
 	if (j != low)
 	{
-		strcpy(temp, A[P].lastName);
-		strcpy(A[P].lastName, A[j].lastName);
-		strcpy(A[j].lastName, temp);
+		temp = A[P];
+		A[P] = A[j];
+		A[j] = temp;
 	}
 
 	return j;
