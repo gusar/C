@@ -430,8 +430,8 @@ void compact_records(FILE *pf)
 
 
 	/* Sorting algorithm sorcery*/
-	quick_sort(all_employees, 0, header.total-1);
-
+	quick_sort(all_employees, 0, header.active-1);
+	
 
 	/* Overwrite database.dat with all_employees[]*/
 	remove("database.dat");
