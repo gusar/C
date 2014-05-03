@@ -90,7 +90,7 @@ int main()
 		header.active = 0;
 		header.deleted = 0;
 		header.cur_number = 10001;
-		fwrite(&header, sizeof(struct header_rec), 1, pFile);
+		write_header(pFile);
 		fclose(pFile);
 
 		printf("File Created\n");
