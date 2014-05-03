@@ -48,7 +48,7 @@ char menu(FILE*);
 void add_employee(FILE*);
 void delete_employee(FILE*);
 void read_header(FILE*);
-void write_header(FILE*);
+int write_header(FILE*);
 void list_employees(FILE*);
 void compact_records(FILE*);
 void quick_sort(struct record[], int, int);
@@ -217,19 +217,24 @@ void add_employee(FILE *pf)
 	fgets_(employee.duration, sizeof(employee.duration), stdin);
 
 	if(fwrite(&employee, sizeof(struct record), 1, pf) == 0) 
+	{
 		printf("\nERROR ADDING EMPLOYEE");
+		fclose(pf);
+	}
+
 	else
+	{
 		printf("\nEmployee added");
+		fclose(pf);
 
-	fclose(pf);
-
-	/* Increment and write header numbers */
-	pf = fopen("database.dat", "r+");
-	header.active++;
-	header.total++;
-	header.cur_number++;
-	write_header(pf);
-	fclose(pf);
+		/* Increment and write header numbers */
+		pf = fopen("database.dat", "r+");
+		header.active++;
+		header.total++;
+		header.cur_number++;
+		write_header(pf);
+		fclose(pf);
+	}
 
 	printf("\n\nPress return\n");
 	getchar();
@@ -309,15 +314,18 @@ void read_header(FILE *pf)
  * Function checks for errors while writing
  * header struct to file.
  * Parameters: pointer to file link
- * Returns: void
+ * Returns: 1 if writing failed, otherwise returns 0.
  */
-void write_header(FILE *pf)
+int write_header(FILE *pf)
 {
 	if(fwrite(&header, sizeof(struct header_rec), 1, pf) == 0)
 	{
 		printf("\nERROR WRITING HEADER");
 		pause();
+		return 1;
 	}
+	else 
+		return 0;
 }//end write_header
 
 
@@ -434,12 +442,12 @@ void compact_records(FILE *pf)
 	
 
 	/* Overwrite database.dat with all_employees[]*/
-	remove("database.dat");
-	pf = fopen("database.dat", "w");
+	int error = 0;
+	pf = fopen("database_temp.dat", "w");
 
 	header.total = j;
 	header.deleted = 0;
-	write_header(pf);
+	error = write_header(pf);
 
 	for(i = 0; i < header.total; i++)
 	{
@@ -447,11 +455,21 @@ void compact_records(FILE *pf)
 		if(fwrite(&employee, sizeof(struct record), 1, pf) == 0)
 		{
 			printf("ERROR WRITING RECORD\n");
+			error = 1;
 		}
 	}//end for
 	fclose(pf);
 
-	printf("\nCompacting Finished");
+	if(error == 0)
+	{
+		remove("database.dat");
+		rename("database_temp.dat", "database.dat");
+		printf( "\nCompacting Finished"
+				"\nRecords are now sorted by surname.");
+	}
+	else
+		printf( "\nCRITICAL ERROR WHILE WRITING NEW FILE\n"
+				"Compacting has been aborted, database remains unchangned." );
 }//end compact_records
 
 
