@@ -29,7 +29,7 @@ struct header_rec
 	int total;
 	int active;
 	int deleted;
-	int cur_number;
+	long int cur_number;
 } header;
 
 struct record
@@ -45,7 +45,7 @@ struct record
 
 /*PROTOTYPES*/
 char menu(FILE*);
-void add_employee(FILE*);
+int add_employee(FILE*);
 void delete_employee(FILE*);
 void read_header(FILE*);
 int write_header(FILE*);
@@ -190,13 +190,22 @@ char menu(FILE *pf)
  * Parameters: pointer to file link
  * Return: void
  */
-void add_employee(FILE *pf)
+int add_employee(FILE *pf)
 {
 
 	pf = fopen("database.dat", "a+");
 
+	/* Check if database is full */
+	printf("\n%ld", header.cur_number);
+	if(header.cur_number > 99999)
+	{
+		printf("\nDATABASE IS FULL");
+		pause();
+		return 1;
+	}
+
 	// Set new employee number
-	snprintf(employee.number, sizeof(char)*6, "%d", header.cur_number);
+	snprintf(employee.number, sizeof(char)*6, "%ld", header.cur_number);
 	printf("\n-------------\nNumber: %s\n-------------\n", employee.number);
 
 	// Get employee info
@@ -238,6 +247,7 @@ void add_employee(FILE *pf)
 
 	printf("\n\nPress return\n");
 	getchar();
+	return 0;
 }//end add_employee
 
 
@@ -462,14 +472,17 @@ void compact_records(FILE *pf)
 
 	if(error == 0)
 	{
-		remove("database.dat");
-		rename("database_temp.dat", "database.dat");
-		printf( "\nCompacting Finished"
-				"\nRecords are now sorted by surname.");
+		if(remove("database.dat") + rename("database_temp.dat", "database.dat") == 0 )
+		{
+			printf( "\nCompacting Finished"
+					"\nRecords are now sorted by surname.");
+		}
+		else
+			printf("\nERROR OVERWRITING OLD DATABASE");
 	}
 	else
-		printf( "\nCRITICAL ERROR WHILE WRITING NEW FILE\n"
-				"Compacting has been aborted, database remains unchangned." );
+		printf( "\nERROR WHILE WRITING NEW FILE"
+				"\nCompacting has been aborted,\ndatabase remains unchangned." );
 }//end compact_records
 
 
