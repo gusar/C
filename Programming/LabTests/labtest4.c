@@ -12,6 +12,7 @@ to request details of passengers, store, and print them.
 */
 
 #include <stdio.h>
+#include <string.h>
 
 #define SIZE 2
 
@@ -102,6 +103,7 @@ void input_passengers(struct details *P[SIZE])
 		P[i] -> flight_date.day = d;
 		P[i] -> flight_date.month = m;
 		P[i] -> flight_date.year = y;
+		strcpy(P[i] -> flight_number, f_number);
 
 		printf("\nPlease enter passenger %d information:\n\n", i+1);
 
