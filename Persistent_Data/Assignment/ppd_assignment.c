@@ -47,6 +47,8 @@ struct record
 	char duration[4];
 } employee;
 
+struct header_rec p_header;
+struct record p_employee;
 
 /*PROTOTYPES*/
 char menu(FILE*);
