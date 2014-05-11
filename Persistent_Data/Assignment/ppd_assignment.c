@@ -23,6 +23,9 @@ Compiles with GCC
 #include <string.h>
 #include <ctype.h>
 
+#define DATABASE "database.dat"
+#define TEMP_DATABASE "database_temp.dat"
+
 
 struct header_rec
 {
@@ -32,14 +35,16 @@ struct header_rec
 	long int cur_number;
 } header;
 
+
+
 struct record
 {
 	char number[6];
-	char firstName[16];
-	char lastName[16];
-	char address[26];
-	char department[10];
-	char duration[3];
+	char firstName[32];
+	char lastName[32];
+	char address[52];
+	char department[12];
+	char duration[4];
 } employee;
 
 
@@ -68,7 +73,7 @@ int main()
 
 	FILE *pFile;
 
-	pFile = fopen("database.dat", "r");
+	pFile = fopen(DATABASE, "r");
 	printf("\n------------------------\n");
 
 	/* If the file doesn't exist, create the file */
@@ -77,7 +82,7 @@ int main()
 	
 		printf("No file found!\n");
 
-		pFile = fopen("database.dat", "w");
+		pFile = fopen(DATABASE, "w");
 		
 		if(!pFile)
 		{
@@ -99,7 +104,7 @@ int main()
 
 
 	/* Load header into memory and print */
-	pFile = fopen("database.dat", "r");
+	pFile = fopen(DATABASE, "r");
 	read_header(pFile);
 	fclose(pFile);
 
@@ -193,7 +198,7 @@ char menu(FILE *pf)
 int add_employee(FILE *pf)
 {
 
-	pf = fopen("database.dat", "a+");
+	pf = fopen(DATABASE, "a+");
 
 	/* Check if database is full */
 	printf("\n%ld", header.cur_number);
@@ -205,7 +210,7 @@ int add_employee(FILE *pf)
 	}
 
 	// Set new employee number
-	snprintf(employee.number, sizeof(char)*6, "%ld", header.cur_number);
+	snprintf(employee.number, sizeof(employee.number), "%ld", header.cur_number);
 	printf("\n-------------\nNumber: %s\n-------------\n", employee.number);
 
 	// Get employee info
@@ -237,7 +242,7 @@ int add_employee(FILE *pf)
 		fclose(pf);
 
 		/* Increment and write header numbers */
-		pf = fopen("database.dat", "r+");
+		pf = fopen(DATABASE, "r+");
 		header.active++;
 		header.total++;
 		header.cur_number++;
@@ -261,7 +266,7 @@ int add_employee(FILE *pf)
  */
 void delete_employee(FILE *pf)
 {
-	pf = fopen("database.dat", "r+");
+	pf = fopen(DATABASE, "r+");
 
 	fseek(pf, sizeof(struct header_rec), SEEK_CUR);
 
@@ -350,7 +355,7 @@ int write_header(FILE *pf)
  */
 void list_employees(FILE *pf)
 {
-	pf = fopen("database.dat", "r");
+	pf = fopen(DATABASE, "r");
 
 	/* Request and set a search key (if any) */
 	char search_type;
@@ -432,7 +437,7 @@ void compact_records(FILE *pf)
 	int i, j = 0;
 	struct record all_employees[header.active];
 
-	pf = fopen("database.dat", "r");
+	pf = fopen(DATABASE, "r");
 	fseek(pf, sizeof(struct header_rec), SEEK_SET);
 
 	/* Load all entries into an array */
@@ -453,7 +458,7 @@ void compact_records(FILE *pf)
 
 	/* Overwrite database.dat with all_employees[]*/
 	int error = 0;
-	pf = fopen("database_temp.dat", "w");
+	pf = fopen(TEMP_DATABASE, "w");
 
 	header.total = j;
 	header.deleted = 0;
@@ -472,7 +477,7 @@ void compact_records(FILE *pf)
 
 	if(error == 0)
 	{
-		if(remove("database.dat") + rename("database_temp.dat", "database.dat") == 0 )
+		if(remove(DATABASE) + rename(TEMP_DATABASE, DATABASE) == 0 )
 		{
 			printf( "\nCompacting Finished"
 					"\nRecords are now sorted by surname.");
