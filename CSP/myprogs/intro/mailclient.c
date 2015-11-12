@@ -6,7 +6,6 @@ int readLine(int);
 int main(int argc, char **argv)
 {
 	int sockfd = 0;
-	// char buff[MAXLINE];
 	struct sockaddr_in servaddr;\
 
 	int GOOGLE_SMTP_PORT = 25;
@@ -22,6 +21,9 @@ int main(int argc, char **argv)
 		err_sys("socket error");
 	}
 
+	/*
+	* Set up socket connection
+	*/
 	bzero(&servaddr, sizeof(servaddr));
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(GOOGLE_SMTP_PORT);
@@ -30,24 +32,27 @@ int main(int argc, char **argv)
 
 	if (connect(sockfd, (SA *) &servaddr, sizeof(servaddr)) < 0 )
 		err_sys("connect error");
+	/**************************/
 
-
+	/*
+	* Construct and send SMTP commands
+	*/
+	// Initialise communication with HELO
 	if (readLine(sockfd) > 0) {
 		Write(sockfd, DIT_IP, strlen(DIT_IP));
 	}
 
+	// Sender email
 	if (readLine(sockfd) > 0) {
 		printf("\nMail from: ");
 		if (scanf("%s", mailfrom) > 0) {
 			strcpy(string, "MAIL FROM: <");
 			strcat(strcat(string, mailfrom), ">\r\n");
-			// printf("%s", string);
 			Write(sockfd, string, strlen(string));
 		}
-		else
-			printf("scanf error");
 	}
 
+	// Recepient email
 	if (readLine(sockfd) > 0 ) {
 		printf("\nMail to: ");
 		if (scanf("%s", mailto) > 0) {
@@ -57,11 +62,13 @@ int main(int argc, char **argv)
 		}
 	}
 
+	// Announce data section
 	if (readLine(sockfd) > 0)  {
 		char data[] = "DATA\r\n";
 		Write(sockfd, data, strlen(data));
 	}
 
+	// Data section
 	if(readLine(sockfd) > 0) {
 		char request[MAXLINE];
 
@@ -98,27 +105,24 @@ int main(int argc, char **argv)
 
 		readLine(sockfd);
 	}
+	/*****************************************/
 
 	exit(0);
 }
 
 
 int readLine(int sock) {
-
 	printf("\r\n");
 	char line[MAXLINE];
 	int n = 0;
 	int counter = 0;
-	while( (n = read(sock, line, MAXLINE)) >0)
-	{
+	while((n = read(sock, line, MAXLINE)) > 0) {
 		counter++;
 		line[n] = 0; //null terminate
-		if(fputs(line, stdout) == EOF)
-		{ //print data time and data returned from server
+		if(fputs(line, stdout) == EOF) { //print data time and data returned from server
 			err_sys("fputs error");
 		}
-
-		if(strstr(line, "\r\n\r\n") != NULL){
+		if(strstr(line, "\r\n\r\n") != NULL) {
 			break;
 		}
 		break;
