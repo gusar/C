@@ -8,9 +8,6 @@
 
 char* readLine(int);
 char* commandBuilder(char*, char*, char*, char*, char*);
-
-int readLine(int);
-char* commandBuilder(int, char*, char*, char*, char*);
 char input[MAXLINE];
 char line[MAXLINE];
 int sockfd;
@@ -77,7 +74,7 @@ int main(int argc, char **argv) {
 
 /*
 * Arguments
-*   int reply: 1 if server reply from last command is expected, otherwise 0.
+*   char *expected: expected server reply code after last command.
 *   char *message: display input field description.
 *   char *prefix: first part of command.
 *   char *in: predefined field input.
