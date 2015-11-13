@@ -2,6 +2,9 @@
 #include <errno.h>
 #include <string.h>
 
+#define GOOGLE_SMTP_ADDRESS "64.233.166.26"
+#define GOOGLE_SMTP_PORT 25 
+
 int readLine(int);
 char* commandBuilder(int, char*, char*, char*, char*);
 char input[MAXLINE];
@@ -10,8 +13,6 @@ int sockfd;
 int main(int argc, char **argv) {
   sockfd = 0;
   struct sockaddr_in servaddr;
-  int GOOGLE_SMTP_PORT = 25;
-  char GOOGLE_SMTP_ADDRESS[] = "64.233.166.26";
   char mailfrom[MAXLINE];
   char mailto[MAXLINE];
 
