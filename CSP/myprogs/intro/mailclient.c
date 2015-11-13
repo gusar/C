@@ -115,7 +115,7 @@ int readLine(int sock) {
   while((n = read(sock, line, MAXLINE)) > 0) {
     counter++;
     line[n] = 0; //null terminate
-    if(fputs(line, stdout) == EOF) { //print data time and data returned from server
+    if(fputs(line, stdout) == EOF) {
       err_sys("fputs error");
     }
     if(strstr(line, "\r\n\r\n") != NULL) {
