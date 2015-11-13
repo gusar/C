@@ -2,9 +2,12 @@
 #include <errno.h>
 #include <string.h>
 
-int readLine(int);
-char* commandBuilder(int, char*, char*, char*, char*);
+#define MAX_INPUT_SIZE 256
+
+char* readLine(int);
+char* commandBuilder(char*, char*, char*, char*, char*);
 char input[MAXLINE];
+char line[MAXLINE];
 int sockfd;
 
 int main(int argc, char **argv) {
@@ -48,27 +51,30 @@ int main(int argc, char **argv) {
   * <return key>
   * <full stop> <return key>
   */
-  commandBuilder(1, "", "", "\0", "HELO 147.252.234.34\r\n");
-  strcpy(mailfrom, commandBuilder(1, "\nMail from: ", "MAIL FROM: <", "\0", ">\r\n"));
-  strcpy(mailto, commandBuilder(1, "\nMail to: ", "RCPT TO: <", "\0", ">\r\n"));
-  commandBuilder(1, "", "", "\0", "DATA\r\n");
-  commandBuilder(1, "", "From: ", mailfrom, "\r\n");
-  commandBuilder(0, "", "To: ", mailto, "\r\n");
-  commandBuilder(0, "\nSubject: ", "Subject: ", "\0", "\r\n");
-  commandBuilder(0, "", "", "\0", "\r\n");
-  commandBuilder(0, "\nBody: ", "", "\0", "\r\n");
-  commandBuilder(0, "", "", "\0", "\r\n");
-  commandBuilder(0, "", "", "\0", ".\r\n");
-  readLine(sockfd);
+  commandBuilder("220", "", "", "\0", "HELO 147.252.234.34\r\n");
+  strcpy(mailfrom, commandBuilder("250", "\nMail from: ", "MAIL FROM: <", "\0", ">\r\n"));
+  strcpy(mailto, commandBuilder("250", "\nMail to: ", "RCPT TO: <", "\0", ">\r\n"));
+  commandBuilder("250", "", "", "\0", "DATA\r\n");
+  commandBuilder("354", "", "From: ", mailfrom, "\r\n");
+  commandBuilder("", "", "To: ", mailto, "\r\n");
+  commandBuilder("", "\nSubject: ", "Subject: ", "\0", "\r\n");
+  commandBuilder("", "", "", "\0", "\r\n");
+  commandBuilder("", "\nBody: ", "", "\0", "\r\n");
+  commandBuilder("", "", "", "\0", "\r\n");
+  commandBuilder("", "", "", "\0", ".\r\n");
 
-  printf("\nIf OK: Email sent succesfull.\n\n");
+  if (strstr(readLine(sockfd), "250") != NULL) {
+    printf("\nEmail sent succesfully.\n\n");
+  } else {
+    printf("\nProblem sending email. Check server response for info.\n\n");
+  }
   exit(0);
 }
 
 
 /*
 * Arguments
-*   int reply: 1 if server reply is expected, otherwise 0.
+*   int reply: 1 if server reply from last command is expected, otherwise 0.
 *   char *message: display input field description.
 *   char *prefix: first part of command.
 *   char *in: predefined field input.
@@ -76,19 +82,29 @@ int main(int argc, char **argv) {
 * Return
 *   char*: input string for optional storage.
 */
-char* commandBuilder(int reply, char *message, char *prefix, char *in, char *postfix) {
+char* commandBuilder(char *expected, char *message, char *prefix, char *in, char *postfix) {
   char command[MAXLINE];
-  if (reply == 1) {
-    if (readLine(sockfd) <= 0) {
-      return "No Server Response!\n";
+  if (strlen(expected) > 1) {
+    char reply[MAXLINE];
+    strcpy(reply, readLine(sockfd));
+    if (strlen(reply) <= 0) {
+      printf("No Server Response. Aborted.\n\n");
+      exit(0);
+    }
+    if (strstr(reply, expected) == NULL) {
+      printf("Bad server response. Something went wrong! Aborted.\n\n");
+      exit(0);
     }
   }
   strcpy(input, in);
   strcpy(command, "\0");
-  if (strlen(message) > 0) {
+  if (strlen(message) > 1) {
     printf("%s", message);
-    while (scanf("%s", input) <= 0) {
-      printf("Bad input. Enter again. %s", message);
+    while (fgets(input, MAX_INPUT_SIZE, stdin) == NULL) {
+      printf("Bad input. Enter again.\n %s", message);
+    }
+    if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')) {
+      input[strlen(input) - 1] = '\0';
     }
   }
   if (strlen(prefix) > 0) {
@@ -108,8 +124,8 @@ char* commandBuilder(int reply, char *message, char *prefix, char *in, char *pos
 /*
 * Read in server response
 */
-int readLine(int sock) {
-  char line[MAXLINE];
+char* readLine(int sock) {
+  strcpy(line, "\0");
   int n = 0;
   int counter = 0;
   while((n = read(sock, line, MAXLINE)) > 0) {
@@ -123,5 +139,5 @@ int readLine(int sock) {
     }
     break;
   }
-  return n;
+  return line;
 }
