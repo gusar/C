@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
   sockfd = 0;
   struct sockaddr_in servaddr;
   int GOOGLE_SMTP_PORT = 25;
-  char GOOGLE_SMTP_ADDRESS[] = "";
+  char GOOGLE_SMTP_ADDRESS[] = "64.233.166.26 25";
   char mailfrom[MAXLINE];
   char mailto[MAXLINE];
 
