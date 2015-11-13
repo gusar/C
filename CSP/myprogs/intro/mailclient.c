@@ -2,7 +2,6 @@
 #include <errno.h>
 #include <string.h>
 
-#define MAX_INPUT_SIZE 256
 #define GOOGLE_SMTP_ADDRESS "64.233.166.26"
 #define GOOGLE_SMTP_PORT 25
 
