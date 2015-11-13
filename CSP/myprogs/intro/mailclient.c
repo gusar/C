@@ -3,9 +3,14 @@
 #include <string.h>
 
 #define MAX_INPUT_SIZE 256
+#define GOOGLE_SMTP_ADDRESS "64.233.166.26"
+#define GOOGLE_SMTP_PORT 25
 
 char* readLine(int);
 char* commandBuilder(char*, char*, char*, char*, char*);
+
+int readLine(int);
+char* commandBuilder(int, char*, char*, char*, char*);
 char input[MAXLINE];
 char line[MAXLINE];
 int sockfd;
@@ -13,8 +18,6 @@ int sockfd;
 int main(int argc, char **argv) {
   sockfd = 0;
   struct sockaddr_in servaddr;
-  int GOOGLE_SMTP_PORT = 25;
-  char GOOGLE_SMTP_ADDRESS[] = "64.233.166.26";
   char mailfrom[MAXLINE];
   char mailto[MAXLINE];
 
