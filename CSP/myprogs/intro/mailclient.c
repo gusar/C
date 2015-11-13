@@ -100,7 +100,7 @@ char* commandBuilder(char *expected, char *message, char *prefix, char *in, char
   strcpy(command, "\0");
   if (strlen(message) > 1) {
     printf("%s", message);
-    while (fgets(input, MAX_INPUT_SIZE, stdin) == NULL) {
+    while (fgets(input, MAXLINE, stdin) == NULL) {
       printf("Bad input. Enter again.\n %s", message);
     }
     if ((strlen(input) > 0) && (input[strlen(input) - 1] == '\n')) {
